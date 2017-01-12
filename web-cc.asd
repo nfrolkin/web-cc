@@ -1,12 +1,13 @@
 (defsystem "web-cc"
   :depends-on (:esrap
                :parse-number
-               :cl-markup)
+               :cl-markup
+               :hunchentoot)
   :pathname "src/"
   :serial t
   :components ((:file "packages")
                (:file "parser")
-               (:file "html"))
+               (:file "html")))
 
 (defmethod asdf:perform ((o asdf:test-op) (c (eql (asdf:find-system :web-cc))))
   (asdf:load-system :web-cc-test)
