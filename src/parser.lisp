@@ -1,7 +1,7 @@
 (in-package #:web-cc)
 
 
-(defparameter *top-level-rule* 'number)
+(defparameter *top-level-rule* 'atom)
 (defparameter *defined-constants* (make-hash-table :test #'equal))
 
 
@@ -85,6 +85,8 @@ Delete all constants from defined constants. Always return NIL."
 (defrule lowercase-letter (character-ranges (#\a #\z)))
 (defrule uppercase-letter (character-ranges (#\A #\Z)))
 
+
+(defrule atom (or number constant))
 
 (defrule constant (and (+ uppercase-letter) (* (or digit uppercase-letter)))
   (:text t)
