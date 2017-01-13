@@ -5,6 +5,7 @@
 (defparameter *defined-constants* (make-hash-table :test #'equal))
 
 
+;; Conditions
 (define-condition undefined-constant-error (error)
   ((constant
     :initarg :constant
@@ -12,6 +13,8 @@
   (:documentation
    "Signaled when parser meet valid constant name without associated value."))
 
+
+;; Support classes
 (defclass constant-cell ()
   ((documentation
     :reader constant-doc
@@ -20,6 +23,8 @@
     :reader constant-value
     :initarg :value)))
 
+
+;; Parser functions
 (defun parse-constant (name)
   (if (gethash name *defined-constants*)
       (constant-value (gethash name *defined-constants*))
@@ -29,6 +34,8 @@
   (let ((n (parse-number:parse-real-number num)))
     (if (floatp n) n (float n))))
 
+
+;; Main functions
 (defun parse (expression &optional (result :number))
   (case result
     (:number (eval (esrap:parse *top-level-rule* expression)))
