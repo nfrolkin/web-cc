@@ -8,5 +8,7 @@
                 #:character-ranges)
   (:export #:parse
            #:def-constant
+           #:delete-constant
+           #:delete-all-constants
            #:undefined-constant-error
            #:undefined-constant-error-name))

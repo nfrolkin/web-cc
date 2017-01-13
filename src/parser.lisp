@@ -51,6 +51,20 @@ Return NIL if constant is new or T for redefinition."
     (setf (gethash const-name *defined-constants*) new-const)
     redefine-p))
 
+(defun delete-constant (name)
+  "Delete constant with NAME.
+
+Delete constant with NAME from defined constants.
+Return T if constant existed, NIL otherwise."
+  (remhash (string-upcase name) *defined-constants*))
+
+(defun delete-all-constants ()
+  "Delete all constants.
+
+Delete all constants from defined constants. Always return NIL."
+  (clrhash *defined-constants*)
+  nil)
+
 
 ;; Grammar rules
 (defrule digit (character-ranges (#\0 #\9)))
