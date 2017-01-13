@@ -36,8 +36,14 @@
 
 
 ;; Main functions
-(defun parse (expression &optional (result :number))
-  (case result
+(defun parse (expression &optional (result-type :number))
+  "Parse EXPRESSION and return result.
+
+Parse EXPRESSION with *TOP-LEVEL-RULE* as start rule.
+Result type depends on RESULT-TYPE:
+ - :number - evaluate AST and return number;
+ - :tree - return AST that is valid Lisp sexp."
+  (case result-type
     (:number (eval (esrap:parse *top-level-rule* expression)))
     (:tree (values (esrap:parse *top-level-rule* expression)))))
 
