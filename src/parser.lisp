@@ -69,6 +69,13 @@ Delete all constants from defined constants. Always return NIL."
 ;; Grammar rules
 (defrule digit (character-ranges (#\0 #\9)))
 (defrule digits (+ digit))
+(defrule lowercase-letter (character-ranges (#\a #\z)))
+(defrule uppercase-letter (character-ranges (#\A #\Z)))
+
+
+(defrule constant (and (+ uppercase-letter) (* (or digit uppercase-letter)))
+  (:text t)
+  (:function parse-constant))
 
 (defrule number (or exponentfloat pointfloat digits)
   (:text t)
