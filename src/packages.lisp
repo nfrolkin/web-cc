@@ -6,4 +6,7 @@
                 #:?
                 #:defrule
                 #:character-ranges)
-  (:export #:parse))
+  (:export #:parse
+           #:def-constant
+           #:undefined-constant-error
+           #:undefined-constant-error-name))

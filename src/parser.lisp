@@ -2,7 +2,28 @@
 
 
 (defparameter *top-level-rule* 'number)
+(defparameter *defined-constants* (make-hash-table :test #'equal))
 
+
+(define-condition undefined-constant-error (error)
+  ((constant
+    :initarg :constant
+    :reader undefined-constant-error-name))
+  (:documentation
+   "Signaled when parser meet valid constant name without associated value."))
+
+(defclass constant-cell ()
+  ((documentation
+    :reader constant-doc
+    :initarg :doc)
+   (value
+    :reader constant-value
+    :initarg :value)))
+
+(defun parse-constant (name)
+  (if (gethash name *defined-constants*)
+      (constant-value (gethash name *defined-constants*))
+      (error 'undefined-constant-error :constant name)))
 
 (defun parse-number (num)
   (let ((n (parse-number:parse-real-number num)))
@@ -12,6 +33,23 @@
   (case result
     (:number (eval (esrap:parse *top-level-rule* expression)))
     (:tree (values (esrap:parse *top-level-rule* expression)))))
+
+(defun def-constant (name value &key documentation)
+  "Define a new constant or redefine old one.
+
+Define a new constant identified by NAME with value equal to VALUE.
+If such constant exist then replace old value with new one.
+DOCUMENTATION is used (if supplied) for explain purpose of constant.
+Return NIL if constant is new or T for redefinition."
+  (check-type value real)
+  (let* ((const-name (string-upcase name))
+         (new-const (make-instance 'constant-cell
+                                   :value value
+                                   :doc (when documentation
+                                          (string documentation))))
+         (redefine-p (nth-value 1 (gethash const-name *defined-constants*))))
+    (setf (gethash const-name *defined-constants*) new-const)
+    redefine-p))
 
 
 ;; Grammar rules
