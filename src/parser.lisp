@@ -54,7 +54,7 @@ Result type depends on RESULT-TYPE:
 If RESULT-TYPE is not equal above types then signals error."
   (case result-type
     (:number (eval (esrap:parse *top-level-rule* expression)))
-    (:tree (values (esrap:parse *top-level-rule* expression)))
+    (:tree (nth-value 0 (esrap:parse *top-level-rule* expression)))
     (otherwise (error 'invalid-result-type
                       :result-type result-type))))
 
