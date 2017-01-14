@@ -13,6 +13,14 @@
   (:documentation
    "Signaled when parser meet valid constant name without associated value."))
 
+(define-condition invalid-result-type (error)
+  ((result-type
+    :initarg :result-type
+    :reader invalid-result-type-datum))
+  (:documentation
+   "Signaled when parser function supplied with unknown RESULT-TYPE.
+See parser function for more details."))
+
 
 ;; Support classes
 (defclass constant-cell ()
@@ -42,10 +50,13 @@
 Parse EXPRESSION with *TOP-LEVEL-RULE* as start rule.
 Result type depends on RESULT-TYPE:
  - :number - evaluate AST and return number;
- - :tree - return AST that is valid Lisp sexp."
+ - :tree - return AST that is valid Lisp sexp.
+If RESULT-TYPE is not equal above types then signals error."
   (case result-type
     (:number (eval (esrap:parse *top-level-rule* expression)))
-    (:tree (values (esrap:parse *top-level-rule* expression)))))
+    (:tree (values (esrap:parse *top-level-rule* expression)))
+    (otherwise (error 'invalid-result-type
+                      :result-type result-type))))
 
 (defun def-constant (name value &key documentation)
   "Define a new constant or redefine old one.
