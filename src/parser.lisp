@@ -92,8 +92,14 @@ Delete all constants from defined constants. Always return NIL."
 
 ;; Grammar rules
 (defrule digit (character-ranges (#\0 #\9)))
+
 (defrule digits (+ digit))
+
+(defrule whitespaces (+ (or #\Space #\Newline #\Tab))
+  (:constant nil))
+
 (defrule lowercase-letter (character-ranges (#\a #\z)))
+
 (defrule uppercase-letter (character-ranges (#\A #\Z)))
 
 
