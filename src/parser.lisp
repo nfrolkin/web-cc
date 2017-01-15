@@ -32,17 +32,6 @@ See parser function for more details."))
     :initarg :value)))
 
 
-;; Parser functions
-(defun parse-constant (name)
-  (if (gethash name *defined-constants*)
-      (constant-value (gethash name *defined-constants*))
-      (error 'undefined-constant-error :constant name)))
-
-(defun parse-number (num)
-  (let ((n (parse-number:parse-real-number num)))
-    (if (floatp n) n (float n))))
-
-
 ;; Main functions
 (defun parse (expression &optional (result-type :number))
   "Parse EXPRESSION and return result.
@@ -130,11 +119,16 @@ Delete all constants from defined constants. Always return NIL."
 
 (defrule constant (and (+ uppercase-letter) (* (or digit uppercase-letter)))
   (:text t)
-  (:function parse-constant))
+  (:lambda (name)
+    (if (gethash name *defined-constants*)
+        (constant-value (gethash name *defined-constants*))
+        (error 'undefined-constant-error :constant name))))
 
 (defrule number (or exponentfloat pointfloat digits)
   (:text t)
-  (:function parse-number))
+  (:lambda (num)
+    (let ((n (parse-number:parse-real-number num)))
+      (if (floatp n) n (float n)))))
 
 (defrule pointfloat (or (and (? digits) "." digits)
                         (and digits ".")))
