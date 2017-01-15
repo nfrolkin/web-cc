@@ -1,7 +1,7 @@
 (in-package #:web-cc)
 
 
-(defparameter *top-level-rule* 'atom)
+(defparameter *top-level-rule* 'power)
 (defparameter *defined-constants* (make-hash-table :test #'equal))
 
 
@@ -102,6 +102,19 @@ Delete all constants from defined constants. Always return NIL."
 
 (defrule uppercase-letter (character-ranges (#\A #\Z)))
 
+(defrule power (and (? whitespaces) base (? whitespaces) (? exponent))
+  (:destructure (w1 base w2 exp)
+                (declare (ignore w1 w2))
+                (if exp
+                    (list 'expt base exp)
+                    base)))
+
+(defrule exponent (and "^" power)
+  (:destructure (raise-op expression)
+                (declare (ignore raise-op))
+                expression))
+
+(defrule base atom)
 
 (defrule atom (or number constant))
 
