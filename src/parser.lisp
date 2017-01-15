@@ -102,14 +102,22 @@ Delete all constants from defined constants. Always return NIL."
 
 (defrule uppercase-letter (character-ranges (#\A #\Z)))
 
+(defrule sign (or "+" "-"))
+
 (defrule expr power)
 
-(defrule power (and (? whitespaces) base (? whitespaces) (? exponent))
-  (:destructure (w1 base w2 exp)
+(defrule power (and (? whitespaces) signed-base (? whitespaces) (? exponent))
+  (:destructure (w1 (sign . base) w2 exp)
                 (declare (ignore w1 w2))
-                (if exp
-                    (list 'expt base exp)
-                    base)))
+                (let ((base (if (string-equal sign "-") (list '- base) base)))
+                  (if exp
+                      (list 'expt base exp)
+                      base))))
+
+(defrule signed-base (and (? sign) (? whitespaces) base)
+  (:destructure (sign w1 base)
+                (declare (ignore w1))
+                (cons sign base)))
 
 (defrule exponent (and "^" power)
   (:destructure (raise-op expression)

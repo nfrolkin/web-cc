@@ -44,3 +44,17 @@
 (test test-signal-incorrect-constant-name-in-expression
   (signals esrap:esrap-parse-error
     (web-cc:parse (random-string #\a #\z))))
+
+(test test-parse-power-operation
+  (for-all ((base (gen-float :bound 10))
+            (power (gen-float :bound 10) (or (not (zerop base))
+                                            (plusp power))))
+    (is (= (expt base power)
+           (web-cc:parse (format nil " ~$ ^ ~$ " base power) :number)))))
+
+(test test-parse-signed-numbers
+  (for-all ((positive-number (gen-integer :min 0 :max 30)))
+    (is (= positive-number
+           (web-cc:parse (format nil " + ~a " positive-number))))
+    (is (= (* -1 positive-number)
+           (web-cc:parse (format nil " - ~a " positive-number))))))
