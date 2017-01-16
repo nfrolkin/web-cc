@@ -24,14 +24,14 @@
 (test test-parse-numbers
   (dolist (cell *test-numbers*)
     (let ((expected (cdr cell))
-          (actual (web-cc:parse (car cell) :number)))
+          (actual (web-cc:compute (car cell))))
       (is (= expected actual)))))
 
 (test test-parse-constant
   (let ((name (random-string #\A #\Z))
         (value (random-float 10)))
     (web-cc:def-constant name value)
-    (is (= value (web-cc:parse (string name) :number)))))
+    (is (= value (web-cc:compute (string name))))))
 
 (test test-signal-undefined-constant
   (signals web-cc:undefined-constant-error
@@ -48,13 +48,13 @@
 (test test-parse-power-operation
   (for-all ((base (gen-float :bound 10))
             (power (gen-float :bound 10) (or (not (zerop base))
-                                            (plusp power))))
-    (is (= (expt base power)
-           (web-cc:parse (format nil " ~$ ^ ~$ " base power) :number)))))
+                                             (plusp power))))
+    (is (= (realpart (expt base power))
+           (web-cc:compute (format nil " ~$ ^ ~$ " base power))))))
 
 (test test-parse-signed-numbers
   (for-all ((positive-number (gen-integer :min 0 :max 30)))
     (is (= positive-number
-           (web-cc:parse (format nil " + ~a " positive-number))))
+           (web-cc:compute (format nil " + ~a " positive-number))))
     (is (= (* -1 positive-number)
-           (web-cc:parse (format nil " - ~a " positive-number))))))
+           (web-cc:compute (format nil " - ~a " positive-number))))))

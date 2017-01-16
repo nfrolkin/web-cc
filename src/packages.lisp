@@ -7,10 +7,9 @@
                 #:defrule
                 #:character-ranges)
   (:export #:parse
+           #:compute
            #:def-constant
            #:delete-constant
            #:delete-all-constants
            #:undefined-constant-error
-           #:undefined-constant-error-name
-           #:invalid-result-type
-           #:invalid-result-type-datum))
+           #:undefined-constant-error-name))
