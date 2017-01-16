@@ -91,22 +91,24 @@ Delete all constants from defined constants. Always return NIL."
 (defrule expr power)
 
 (defrule power (and (? whitespaces) signed-base (? whitespaces) (? exponent))
-  (:destructure (w1 (sign . base) w2 exp)
-                (declare (ignore w1 w2))
-                (let ((base (if (string-equal sign "-") (list '- base) base)))
-                  (if exp
-                      (list 'expt base exp)
-                      base))))
+  (:lambda (production)
+    (let* ((signed-base (second production))
+           (exponent (fourth production)))
+      (if exponent
+          (list 'expt signed-base exponent)
+          signed-base))))
 
 (defrule signed-base (and (? sign) (? whitespaces) base)
-  (:destructure (sign w1 base)
-                (declare (ignore w1))
-                (cons sign base)))
+  (:lambda (production)
+    (let* ((sign (first production))
+           (base (third production)))
+      (if (string= "-" sign)
+          (list '- base)
+          base))))
 
 (defrule exponent (and "^" power)
-  (:destructure (raise-op expression)
-                (declare (ignore raise-op))
-                expression))
+  (:lambda (production)
+    (second production)))
 
 (defrule base atom)
 
