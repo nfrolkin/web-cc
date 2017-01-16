@@ -110,7 +110,11 @@ Delete all constants from defined constants. Always return NIL."
   (:lambda (production)
     (second production)))
 
-(defrule base atom)
+(defrule base (or enclosed-expr atom))
+
+(defrule enclosed-expr (and "(" expr ")")
+  (:lambda (production)
+    (second production)))
 
 (defrule atom (or number constant))
 

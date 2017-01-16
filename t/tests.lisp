@@ -58,3 +58,11 @@
            (web-cc:compute (format nil " + ~a " positive-number))))
     (is (= (* -1 positive-number)
            (web-cc:compute (format nil " - ~a " positive-number))))))
+
+(test test-parse-enclosed-expression
+  (for-all ((number-1 (gen-float :bound 30) (plusp number-1))
+            (number-2 (gen-float :bound 30) (plusp number-2))
+            (number-3 (gen-float :bound 30) (plusp number-3)))
+    (is (equal (list 'expt (list 'expt number-1 number-2) number-3)
+               (web-cc:parse (format nil " (~$ ^ ~$) ^ ~$"
+                                     number-1 number-2 number-3))))))
