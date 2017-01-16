@@ -14,6 +14,8 @@
 (defparameter *test-term-ops* (list (cons "*" '*)
                                     (cons "/" '/)
                                     (cons "%" 'mod)))
+(defparameter *test-expr-ops* (list (cons "+" '+)
+                                    (cons "-" '-)))
 
 (defun random-string (start-char end-char)
   (let* ((char-generator (gen-character :code (gen-integer :min (char-code start-char)
@@ -72,6 +74,12 @@
 
 (test test-parse-term
   (dolist (cell *test-term-ops*)
+    (is (equal (list (cdr cell) 1.0 1.0)
+               (web-cc:parse (format nil "~$ ~a ~$"
+                                     1.0 (car cell) 1.0))))))
+
+(test test-parse-expr
+  (dolist (cell *test-expr-ops*)
     (is (equal (list (cdr cell) 1.0 1.0)
                (web-cc:parse (format nil "~$ ~a ~$"
                                      1.0 (car cell) 1.0))))))

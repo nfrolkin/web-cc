@@ -88,14 +88,24 @@ Delete all constants from defined constants. Always return NIL."
 
 (defrule sign (or "+" "-"))
 
-(defrule expr term)
-
-(defrule term (and power (* power-op))
+(defrule expr (and term (* term-op))
   (:lambda (production)
-    (let* ((power (first production))
+    (let* ((term (first production))
            (term-op-multiple (rest production)))
       (if (first term-op-multiple)
           (loop for (operator . operand) in (first term-op-multiple)
+             with init = term
+             for expr = (list operator init operand) then (list operator expr operand)
+             finally (return expr))
+          term))))
+
+(defrule term-op (and (or "+" "-") term)
+  (:lambda (production)
+    (let ((operation (case (coerce (first production) 'character)
+                       (#\+ '+)
+                       (#\- '-)))
+          (term (second production)))
+      (cons operation term))))
 
 (defrule term (and power (* power-op))
   (:lambda (production)
