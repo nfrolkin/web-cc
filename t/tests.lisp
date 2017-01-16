@@ -11,6 +11,9 @@
                                ("1e10" . 1e10)
                                ("3.14e-10" . 3.14e-10)
                                ("0e0" . 0e0)))
+(defparameter *test-term-ops* (list (cons "*" '*)
+                                    (cons "/" '/)
+                                    (cons "%" 'mod)))
 
 (defun random-string (start-char end-char)
   (let* ((char-generator (gen-character :code (gen-integer :min (char-code start-char)
@@ -66,3 +69,9 @@
     (is (equal (list 'expt (list 'expt number-1 number-2) number-3)
                (web-cc:parse (format nil " (~$ ^ ~$) ^ ~$"
                                      number-1 number-2 number-3))))))
+
+(test test-parse-term
+  (dolist (cell *test-term-ops*)
+    (is (equal (list (cdr cell) 1.0 1.0)
+               (web-cc:parse (format nil "~$ ~a ~$"
+                                     1.0 (car cell) 1.0))))))

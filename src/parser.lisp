@@ -88,7 +88,34 @@ Delete all constants from defined constants. Always return NIL."
 
 (defrule sign (or "+" "-"))
 
-(defrule expr power)
+(defrule expr term)
+
+(defrule term (and power (* power-op))
+  (:lambda (production)
+    (let* ((power (first production))
+           (term-op-multiple (rest production)))
+      (if (first term-op-multiple)
+          (loop for (operator . operand) in (first term-op-multiple)
+
+(defrule term (and power (* power-op))
+  (:lambda (production)
+    (let* ((power (first production))
+           (power-op-multiple (rest production)))
+      (if (first power-op-multiple)
+          (loop for (operator . operand) in (first power-op-multiple)
+             with init = power
+             for expr = (list operator init operand) then (list operator expr operand)
+             finally (return expr))
+          power))))
+
+(defrule power-op (and (or "*" "/" "%") power)
+  (:lambda (production)
+    (let ((operation (case (coerce (first production) 'character)
+                       (#\* '*)
+                       (#\/ '/)
+                       (#\% 'mod)))
+          (power (second production)))
+      (cons operation power))))
 
 (defrule power (and (? whitespaces) signed-base (? whitespaces) (? exponent))
   (:lambda (production)
