@@ -149,6 +149,16 @@ Delete all constants from defined constants. Always return NIL."
 
 (defrule base (or enclosed-expr atom))
 
+(defrule arglist (and expr (* expr-rest))
+  (:lambda (production)
+    (let ((first-arg (first production))
+          (rest-args (second production)))
+      (cons first-arg rest-args))))
+
+(defrule expr-rest (and "," expr)
+  (:lambda (production)
+    (second production)))
+
 (defrule enclosed-expr (and "(" expr ")")
   (:lambda (production)
     (second production)))
