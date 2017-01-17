@@ -7,19 +7,12 @@
 
 
 ;; Conditions
-(define-condition undefined-constant-error (error)
-  ((constant
-    :initarg :constant
-    :reader undefined-constant-error-name))
+(define-condition undefined-error (error)
+  ((identifier
+    :initarg :identifier
+    :reader undefined-error-identifier))
   (:documentation
-   "Signaled when parser meet valid constant name without associated value."))
-
-(define-condition undefined-function-error (error)
-  ((function
-    :initarg :function
-    :reader undefined-function-error-name))
-  (:documentation
-   "Signaled when parser meet valid function name but it's undefined."))
+   "Signaled when parser meet valid name but it's undefined."))
 
 
 ;; Support classes
@@ -169,7 +162,7 @@ Delete all constants from defined constants. Always return NIL."
     (let ((func-entry (gethash func *defined-functions*)))
       (if func-entry
           (defined-value func-entry)
-          (error 'undefined-function-error :function func)))))
+          (error 'undefined-error :identifier func)))))
 
 (defrule arglist (and expr (* expr-rest))
   (:lambda (production)
@@ -192,7 +185,7 @@ Delete all constants from defined constants. Always return NIL."
   (:lambda (name)
     (if (gethash name *defined-constants*)
         (defined-value (gethash name *defined-constants*))
-        (error 'undefined-constant-error :constant name))))
+        (error 'undefined-error :identifier name))))
 
 (defrule number (or exponentfloat pointfloat digits)
   (:text t)

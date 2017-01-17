@@ -11,5 +11,5 @@
            #:def-constant
            #:delete-constant
            #:delete-all-constants
-           #:undefined-constant-error
-           #:undefined-constant-error-name))
+           #:undefined-error
+           #:undefined-error-identifier))
