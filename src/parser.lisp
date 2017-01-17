@@ -3,6 +3,7 @@
 
 (defparameter *top-level-rule* 'expr)
 (defparameter *defined-constants* (make-hash-table :test #'equal))
+(defparameter *defined-functions* (make-hash-table :test #'equal))
 
 
 ;; Conditions
@@ -12,6 +13,13 @@
     :reader undefined-constant-error-name))
   (:documentation
    "Signaled when parser meet valid constant name without associated value."))
+
+(define-condition undefined-function-error (error)
+  ((function
+    :initarg :function
+    :reader undefined-function-error-name))
+  (:documentation
+   "Signaled when parser meet valid function name but it's undefined."))
 
 
 ;; Support classes
@@ -147,7 +155,21 @@ Delete all constants from defined constants. Always return NIL."
   (:lambda (production)
     (second production)))
 
-(defrule base (or enclosed-expr atom))
+(defrule base (or function-expr enclosed-expr atom))
+
+(defrule function-expr (and function "(" (? arglist) ")")
+  (:lambda (production)
+    (let ((function (first production))
+          (arglist (third production)))
+      (cons function arglist))))
+
+(defrule function (and (+ lowercase-letter) (* (or digit lowercase-letter)))
+  (:text t)
+  (:lambda (func)
+    (let ((func-entry (gethash func *defined-functions*)))
+      (if func-entry
+          (defined-value func-entry)
+          (error 'undefined-function-error :function func)))))
 
 (defrule arglist (and expr (* expr-rest))
   (:lambda (production)
