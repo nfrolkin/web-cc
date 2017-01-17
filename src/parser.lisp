@@ -15,16 +15,6 @@
    "Signaled when parser meet valid name but it's undefined."))
 
 
-;; Support classes
-(defclass defined ()
-  ((documentation
-    :reader defined-info
-    :initarg :info)
-   (value
-    :reader defined-value
-    :initarg :value)))
-
-
 ;; Main functions
 (defun compute (expression)
   "Compute EXPRESSION and return answer as float.
@@ -52,10 +42,7 @@ DOCUMENTATION is used (if supplied) for explain purpose of constant.
 Return NIL if constant is new or T for redefinition."
   (check-type value real)
   (let* ((const-name (string-upcase name))
-         (new-const (make-instance 'defined
-                                   :value value
-                                   :info (when documentation
-                                           (string documentation))))
+         (new-const (list :value value :doc (when documentation (string documentation))))
          (redefine-p (nth-value 1 (gethash const-name *defined-constants*))))
     (setf (gethash const-name *defined-constants*) new-const)
     redefine-p))
@@ -161,7 +148,7 @@ Delete all constants from defined constants. Always return NIL."
   (:lambda (func)
     (let ((func-entry (gethash func *defined-functions*)))
       (if func-entry
-          (defined-value func-entry)
+          (getf func-entry :value)
           (error 'undefined-error :identifier func)))))
 
 (defrule arglist (and expr (* expr-rest))
@@ -184,7 +171,7 @@ Delete all constants from defined constants. Always return NIL."
   (:text t)
   (:lambda (name)
     (if (gethash name *defined-constants*)
-        (defined-value (gethash name *defined-constants*))
+        (getf (gethash name *defined-constants*) :value)
         (error 'undefined-error :identifier name))))
 
 (defrule number (or exponentfloat pointfloat digits)
