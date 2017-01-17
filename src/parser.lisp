@@ -15,12 +15,12 @@
 
 
 ;; Support classes
-(defclass constant-cell ()
+(defclass defined ()
   ((documentation
-    :reader constant-doc
-    :initarg :doc)
+    :reader defined-info
+    :initarg :info)
    (value
-    :reader constant-value
+    :reader defined-value
     :initarg :value)))
 
 
@@ -51,10 +51,10 @@ DOCUMENTATION is used (if supplied) for explain purpose of constant.
 Return NIL if constant is new or T for redefinition."
   (check-type value real)
   (let* ((const-name (string-upcase name))
-         (new-const (make-instance 'constant-cell
+         (new-const (make-instance 'defined
                                    :value value
-                                   :doc (when documentation
-                                          (string documentation))))
+                                   :info (when documentation
+                                           (string documentation))))
          (redefine-p (nth-value 1 (gethash const-name *defined-constants*))))
     (setf (gethash const-name *defined-constants*) new-const)
     redefine-p))
@@ -169,7 +169,7 @@ Delete all constants from defined constants. Always return NIL."
   (:text t)
   (:lambda (name)
     (if (gethash name *defined-constants*)
-        (constant-value (gethash name *defined-constants*))
+        (defined-value (gethash name *defined-constants*))
         (error 'undefined-constant-error :constant name))))
 
 (defrule number (or exponentfloat pointfloat digits)
