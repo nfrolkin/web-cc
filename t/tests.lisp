@@ -36,7 +36,7 @@
   (let ((name (random-string #\A #\Z))
         (value (random-float 10)))
     (web-cc:def-constant name value)
-    (is (= value (web-cc:compute (string name))))))
+    (is (= value (web-cc:parse (string name))))))
 
 (test test-signal-undefined-constant
   (signals web-cc:undefined-constant-error
@@ -51,26 +51,16 @@
     (web-cc:parse (random-string #\a #\z))))
 
 (test test-parse-power-operation
-  (for-all ((base (gen-float :bound 10))
-            (power (gen-float :bound 10) (or (not (zerop base))
-                                             (plusp power))))
-    (is (= (realpart (expt base power))
-           (web-cc:compute (format nil " ~$ ^ ~$ " base power))))))
+    (is (equal (list 'expt 1.0 1.0)
+               (web-cc:parse "1.0 ^ 1.0"))))
 
 (test test-parse-signed-numbers
-  (for-all ((positive-number (gen-integer :min 0 :max 30)))
-    (is (= positive-number
-           (web-cc:compute (format nil " + ~a " positive-number))))
-    (is (= (* -1 positive-number)
-           (web-cc:compute (format nil " - ~a " positive-number))))))
+    (is (equal (list '- 1.0) (web-cc:parse "-1.0")))
+    (is (= 1.0 (web-cc:parse "+1.0"))))
 
 (test test-parse-enclosed-expression
-  (for-all ((number-1 (gen-float :bound 30) (plusp number-1))
-            (number-2 (gen-float :bound 30) (plusp number-2))
-            (number-3 (gen-float :bound 30) (plusp number-3)))
-    (is (equal (list 'expt (list 'expt number-1 number-2) number-3)
-               (web-cc:parse (format nil " (~$ ^ ~$) ^ ~$"
-                                     number-1 number-2 number-3))))))
+  (is (equal (list 'expt (list 'expt 1.0 1.0) 2.0)
+             (web-cc:parse "(1.0 ^ 1.0) ^ 2.0"))))
 
 (test test-parse-term
   (dolist (cell *test-term-ops*)
