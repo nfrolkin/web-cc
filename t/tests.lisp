@@ -102,3 +102,23 @@
     (is (equal (list (cdr cell) 1.0 1.0)
                (web-cc:parse (format nil "~$ ~a ~$"
                                      1.0 (car cell) 1.0))))))
+
+(test test-valid-expression
+  (web-cc:def-constant "PI" 3.14)
+  (web-cc:def-function "sin" 'sin 1)
+  (is (equal (list '*
+                   (list '+
+                         3.14
+                         (list 'sin 1.0))
+                   (list 'expt
+                         4.0
+                         (list '- 2.0)))
+             (web-cc:parse "(PI + sin(1)) * 4 ^ -2"))))
+
+(test test-invalid-expressions
+  (signals web-cc:parser-error
+    (web-cc:parse "pi + pi"))
+  (signals web-cc:parser-error
+    (web-cc:parse "PI()"))
+  (signals web-cc:parser-error
+    (web-cc:parse "PI(1,2)")))
