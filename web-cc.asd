@@ -7,7 +7,9 @@
   :serial t
   :components ((:file "packages")
                (:file "parser")
-               (:file "html")))
+               (:file "html")
+               (:file "web")
+               (:file "runner")))
 
 (defmethod asdf:perform ((o asdf:test-op) (c (eql (asdf:find-system :web-cc))))
   (asdf:load-system :web-cc-test)

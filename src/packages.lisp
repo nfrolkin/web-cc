@@ -8,6 +8,8 @@
                 #:character-ranges)
   (:export #:parse
            #:compute
+           #:simple-server/run
+           #:simple-server/stop
            #:def-constant
            #:delete-constant
            #:delete-all-constants
