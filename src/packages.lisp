@@ -11,6 +11,9 @@
            #:def-constant
            #:delete-constant
            #:delete-all-constants
+           #:def-function
+           #:delete-function
+           #:delete-all-functions
            #:undefined-error
            #:undefined-error-identifier
            #:mismatch-argument-error

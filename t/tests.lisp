@@ -20,7 +20,7 @@
 (defun random-string (start-char end-char)
   (let* ((char-generator (gen-character :code (gen-integer :min (char-code start-char)
                                                            :max (char-code end-char)))))
-    (funcall (gen-string :elements char-generator))))
+    (string (funcall (gen-string :elements char-generator)))))
 
 (defun random-float (bound)
   (funcall (gen-float :bound bound)))
@@ -36,7 +36,7 @@
   (let ((name (random-string #\A #\Z))
         (value (random-float 10)))
     (web-cc:def-constant name value)
-    (is (= value (web-cc:parse (string name))))))
+    (is (= value (web-cc:parse name)))))
 
 (test test-signal-undefined-constant
   (signals web-cc:undefined-error
@@ -49,6 +49,35 @@
 (test test-signal-incorrect-constant-name-in-expression
   (signals esrap:esrap-parse-error
     (web-cc:parse (random-string #\a #\z))))
+
+(test test-parse-function
+  (let ((name (random-string #\a #\z))
+        (func 'sin))
+    (web-cc:def-function name func 1)
+    (is (equal (list 'sin 1.0)
+               (web-cc:parse (format nil "~a(1.0)" name))))))
+
+(test test-signal-undefined-function
+  (signals web-cc:undefined-error
+    (web-cc:parse (format nil "~a(1.0)" (random-string #\a #\z)))))
+
+(test test-signal-mismatch-arguments-less-when-expected
+  (web-cc:def-function "sin" 'sin 1)
+  (signals web-cc:mismatch-argument-error
+    (web-cc:parse "sin()")))
+
+(test test-signal-mismatch-arguments-more-when-expected
+  (web-cc:def-function "sin" 'sin 1)
+  (signals web-cc:mismatch-argument-error
+    (web-cc:parse "sin(1.0, 1.0)")))
+
+(test test-signal-incorrect-function-value-in-definition
+  (signals type-error
+    (web-cc:def-function (random-string #\a #\z) "" 1)))
+
+(test test-signal-incorrect-function-name-in-expression
+  (signals esrap:esrap-parse-error
+    (web-cc:parse (format nil "~a(1.0)" (random-string #\A #\Z)))))
 
 (test test-parse-power-operation
     (is (equal (list 'expt 1.0 1.0)

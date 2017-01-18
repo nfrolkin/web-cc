@@ -72,6 +72,37 @@ Delete all constants from defined constants. Always return NIL."
   (clrhash *defined-constants*)
   nil)
 
+(defun def-function (name function-symbol args-number &key documentation)
+  "Define a new function or redefine old one.
+
+Define a new function identified by NAME with value equal to SYMBOL-OR-FUNCTION.
+If such function exist then replace old value with new one.
+DOCUMENTATION is used (if supplied) for explain purpose of function. Must be convertable to string.
+ARGS-NUMBER specify what number of arguments function can apply. If real number of 
+parameters at parsing time will be less or more then error will be signaled.
+Return NIL if function is new or T for redefinition."
+  (check-type function-symbol symbol)
+  (let* ((func-name (string-downcase name))
+         (new-func (list :value function-symbol
+                         :nargs args-number
+                         :doc (when documentation (string documentation))))
+         (redefine-p (nth-value 1 (gethash func-name *defined-functions*))))
+    (setf (gethash func-name *defined-functions*) new-func)
+    redefine-p))
+
+(defun delete-function (name)
+  "Delete function with NAME.
+
+Delete function with NAME from defined functions.
+Return T if function existed, NIL otherwise."
+  (remhash (string-downcase name) *defined-functions*))
+
+(defun delete-all-functions ()
+  "Delete all functions.
+
+Delete all functions from defined functions. Always return NIL."
+  (clrhash *defined-functions*)
+  nil)
 
 
 ;; Function utilities
@@ -142,7 +173,7 @@ Delete all constants from defined constants. Always return NIL."
   (:lambda (production)
     (second production)))
 
-(defrule base (or function-expr enclosed-expr atom))
+(defrule base (or atom function-expr enclosed-expr))
 
 (defrule function-expr (and function "(" (? arglist) ")")
   (:lambda (production)
