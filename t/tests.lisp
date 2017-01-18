@@ -47,7 +47,7 @@
     (web-cc:def-constant (random-string #\A #\Z) nil)))
 
 (test test-signal-incorrect-constant-name-in-expression
-  (signals esrap:esrap-parse-error
+  (signals web-cc:parser-error
     (web-cc:parse (random-string #\a #\z))))
 
 (test test-parse-function
@@ -76,7 +76,7 @@
     (web-cc:def-function (random-string #\a #\z) "" 1)))
 
 (test test-signal-incorrect-function-name-in-expression
-  (signals esrap:esrap-parse-error
+  (signals web-cc:parser-error
     (web-cc:parse (format nil "~a(1.0)" (random-string #\A #\Z)))))
 
 (test test-parse-power-operation

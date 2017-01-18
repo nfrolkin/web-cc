@@ -14,6 +14,8 @@
            #:def-function
            #:delete-function
            #:delete-all-functions
+           #:parser-error
+           #:parser-error-position
            #:undefined-error
            #:undefined-error-identifier
            #:mismatch-argument-error

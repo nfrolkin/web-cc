@@ -25,6 +25,13 @@
     :initarg :expect
     :reader mismatch-argument-error-args-expected)))
 
+(define-condition parser-error (error)
+  ((position
+    :initarg :pos
+    :reader parser-error-position))
+  (:documentation
+   "Signaled when parser encounter an error."))
+
 
 ;; Main functions
 (defun compute (expression)
@@ -42,7 +49,9 @@ Return Abstract Syntax Tree of EXPRESSION.
 This AST is valid Lisp code so it can be evaluated.
 EXPRESSION must be type of string or error would be signaled."
   (check-type expression string)
-  (nth-value 0 (esrap:parse *top-level-rule* expression)))
+  (nth-value 0 (handler-case (esrap:parse *top-level-rule* expression)
+                 (esrap:esrap-error (e) (error 'parser-error
+                                               :pos (esrap:esrap-error-position e))))))
 
 (defun def-constant (name value &key documentation)
   "Define a new constant or redefine old one.
