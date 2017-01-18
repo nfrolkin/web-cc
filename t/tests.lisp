@@ -39,7 +39,7 @@
     (is (= value (web-cc:parse name)))))
 
 (test test-signal-undefined-constant
-  (signals web-cc:undefined-error
+  (signals web-cc:undefined-constant-error
     (web-cc:parse (random-string #\A #\Z))))
 
 (test test-signal-incorrect-constant-value-in-definition

@@ -19,6 +19,11 @@
   (:documentation
    "Signaled when parser meet undefined function name."))
 
+(define-condition undefined-constant-error (undefined-error)
+  ()
+  (:documentation
+   "Signaled when parser meet undefined constant name."))
+
 (define-condition mismatch-argument-error (error)
   ((function-name
     :initarg :name
@@ -234,7 +239,7 @@ Delete all functions from defined functions. Always return NIL."
     (let ((const-entry (gethash name *defined-constants*)))
       (if const-entry
           (getf const-entry :value)
-          (error 'undefined-error :identifier name)))))
+          (error 'undefined-constant-error :identifier name)))))
 
 (defrule number (or exponentfloat pointfloat digits)
   (:text t)
