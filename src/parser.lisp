@@ -23,7 +23,9 @@
     :reader mismatch-argument-error-args-provided)
    (args-expected
     :initarg :expect
-    :reader mismatch-argument-error-args-expected)))
+    :reader mismatch-argument-error-args-expected))
+  (:documentation
+   "Signaled when parser detect what passed parameters not equal to expected."))
 
 (define-condition parser-error (error)
   ((position
