@@ -146,16 +146,23 @@ Delete all constants from defined constants. Always return NIL."
 
 (defrule function-expr (and function "(" (? arglist) ")")
   (:lambda (production)
-    (let ((function (first production))
+    (let ((function (car (first production)))
+          (function-nargs (cdr (first production)))
           (arglist (third production)))
-      (cons function arglist))))
+      (if (= (length arglist) function-nargs)
+          (cons function arglist)
+          (error 'mismatch-argument-error
+                 :name (string-downcase (symbol-name function))
+                 :args (length arglist)
+                 :expect function-nargs)))))
 
 (defrule function (and (+ lowercase-letter) (* (or digit lowercase-letter)))
   (:text t)
   (:lambda (func)
     (let ((func-entry (gethash func *defined-functions*)))
       (if func-entry
-          (getf func-entry :value)
+          (cons (getf func-entry :value)
+                (getf func-entry :nargs))
           (error 'undefined-error :identifier func)))))
 
 (defrule arglist (and expr (* expr-rest))
