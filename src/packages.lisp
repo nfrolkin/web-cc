@@ -18,6 +18,7 @@
            #:parser-error-position
            #:undefined-error
            #:undefined-error-identifier
+           #:undefined-function-error
            #:mismatch-argument-error
            #:mismatch-argument-error-name
            #:mismatch-argument-error-args-expected

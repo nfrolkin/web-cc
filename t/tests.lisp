@@ -58,7 +58,7 @@
                (web-cc:parse (format nil "~a(1.0)" name))))))
 
 (test test-signal-undefined-function
-  (signals web-cc:undefined-error
+  (signals web-cc:undefined-function-error
     (web-cc:parse (format nil "~a(1.0)" (random-string #\a #\z)))))
 
 (test test-signal-mismatch-arguments-less-when-expected

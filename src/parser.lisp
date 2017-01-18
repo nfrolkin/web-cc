@@ -14,6 +14,11 @@
   (:documentation
    "Signaled when parser meet valid name but it's undefined."))
 
+(define-condition undefined-function-error (undefined-error)
+  ()
+  (:documentation
+   "Signaled when parser meet undefined function name."))
+
 (define-condition mismatch-argument-error (error)
   ((function-name
     :initarg :name
@@ -205,7 +210,7 @@ Delete all functions from defined functions. Always return NIL."
       (if func-entry
           (cons (getf func-entry :value)
                 (getf func-entry :nargs))
-          (error 'undefined-error :identifier func)))))
+          (error 'undefined-function-error :identifier func)))))
 
 (defrule arglist (and expr (* expr-rest))
   (:lambda (production)
