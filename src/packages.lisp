@@ -12,4 +12,8 @@
            #:delete-constant
            #:delete-all-constants
            #:undefined-error
-           #:undefined-error-identifier))
+           #:undefined-error-identifier
+           #:mismatch-argument-error
+           #:mismatch-argument-error-name
+           #:mismatch-argument-error-args-expected
+           #:mismatch-argument-error-args-provided))

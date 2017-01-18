@@ -14,6 +14,17 @@
   (:documentation
    "Signaled when parser meet valid name but it's undefined."))
 
+(define-condition mismatch-argument-error (error)
+  ((function-name
+    :initarg :name
+    :reader mismatch-argument-error-function-name)
+   (args-provided
+    :initarg :args
+    :reader mismatch-argument-error-args-provided)
+   (args-expected
+    :initarg :expect
+    :reader mismatch-argument-error-args-expected)))
+
 
 ;; Main functions
 (defun compute (expression)
