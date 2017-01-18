@@ -62,6 +62,29 @@ Delete all constants from defined constants. Always return NIL."
   nil)
 
 
+
+;; Function utilities
+(defun convert-operation (production)
+  (let ((operation (case (coerce (first production) 'character)
+                     (#\+ '+)
+                     (#\- '-)
+                     (#\* '*)
+                     (#\/ '/)
+                     (#\% 'mod)))
+        (operand (second production)))
+    (cons operation operand)))
+
+(defun process-binary-operation/left-assoc (production)
+  (let* ((first-operand (first production))
+         (rest-operands (rest production)))
+    (if (first rest-operands)
+        (loop for (operator . operand) in (first rest-operands)
+           with init = first-operand
+           for expr = (list operator init operand) then (list operator expr operand)
+           finally (return expr))
+        first-operand)))
+
+
 ;; Grammar rules
 (defrule digit (character-ranges (#\0 #\9)))
 
@@ -77,43 +100,16 @@ Delete all constants from defined constants. Always return NIL."
 (defrule sign (or "+" "-"))
 
 (defrule expr (and term (* term-op))
-  (:lambda (production)
-    (let* ((term (first production))
-           (term-op-multiple (rest production)))
-      (if (first term-op-multiple)
-          (loop for (operator . operand) in (first term-op-multiple)
-             with init = term
-             for expr = (list operator init operand) then (list operator expr operand)
-             finally (return expr))
-          term))))
+  (:function process-binary-operation/left-assoc))
 
 (defrule term-op (and (or "+" "-") term)
-  (:lambda (production)
-    (let ((operation (case (coerce (first production) 'character)
-                       (#\+ '+)
-                       (#\- '-)))
-          (term (second production)))
-      (cons operation term))))
+  (:function convert-operation))
 
 (defrule term (and power (* power-op))
-  (:lambda (production)
-    (let* ((power (first production))
-           (power-op-multiple (rest production)))
-      (if (first power-op-multiple)
-          (loop for (operator . operand) in (first power-op-multiple)
-             with init = power
-             for expr = (list operator init operand) then (list operator expr operand)
-             finally (return expr))
-          power))))
+  (:function process-binary-operation/left-assoc))
 
 (defrule power-op (and (or "*" "/" "%") power)
-  (:lambda (production)
-    (let ((operation (case (coerce (first production) 'character)
-                       (#\* '*)
-                       (#\/ '/)
-                       (#\% 'mod)))
-          (power (second production)))
-      (cons operation power))))
+  (:function convert-operation))
 
 (defrule power (and (? whitespaces) signed-base (? whitespaces) (? exponent))
   (:lambda (production)
@@ -170,9 +166,10 @@ Delete all constants from defined constants. Always return NIL."
 (defrule constant (and (+ uppercase-letter) (* (or digit uppercase-letter)))
   (:text t)
   (:lambda (name)
-    (if (gethash name *defined-constants*)
-        (getf (gethash name *defined-constants*) :value)
-        (error 'undefined-error :identifier name))))
+    (let ((const-entry (gethash name *defined-constants*)))
+      (if const-entry
+          (getf const-entry :value)
+          (error 'undefined-error :identifier name)))))
 
 (defrule number (or exponentfloat pointfloat digits)
   (:text t)
