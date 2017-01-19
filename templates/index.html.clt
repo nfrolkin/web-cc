@@ -5,10 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/assets/w3.css">
     <link rel="stylesheet" href="/assets/style.css">
+    <script src="/assets/site.js"></script>
     <title>Калькулятор</title>
   </head>
   <body>
     <div class="w3-content main">
+      <div id="modal-doc" class="w3-modal">
+        <div class="w3-modal-content w3-container w3-round w3-card-4">
+          <header>
+            <span class="w3-closebtn" onclick="closeModal('modal-doc')">&times</span>
+            <h2 class="w3-bottombar w3-border-black">Документация</h2>
+          </header>
+          <div class="w3-section">
+            <% if (@ function-list) %>
+            <h3 class="w3-border-bottom">Функции</h3>
+            <table class="w3-table w3-striped">
+              <tr>
+                <th>Имя</th>
+                <th>Агрументы</th>
+                <th>Описание</th>
+              </tr>
+              <% loop for function in (@ function-list) do %>
+              <tr>
+                <td><b><%= first function %></b></td>
+                <td><%= princ-to-string (third function) %></td>
+                <% if (fourth function) %>
+                <td><%= fourth function %></td>
+                <% else %>
+                <td>Нет описания</td>
+                <% end %>
+              </tr>
+              <% end %>
+            </table>
+            <% end %>
+            <% if (@ constant-list) %>
+            <h3 class="w3-border-bottom">Константы</h3>
+            <table class="w3-table w3-striped">
+              <tr>
+                <th>Имя</th>
+                <th>Значение</th>
+                <th>Описание</th>
+              </tr>
+              <% loop for constant in (@ constant-list) do %>
+              <tr>
+                <td><b><%= first constant %></b></td>
+                <td><%= princ-to-string (second constant) %></td>
+                <% if (third constant) %>
+                <td><%= third constant %></td>
+                <% else %>
+                <td>Нет описания</td>
+                <% end %>
+              </tr>
+              <% end %>
+            </table>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="w3-row-padding">
+        <button class="w3-btn w3-white w3-border w3-border-grey w3-text-black w3-round-large" onclick="openModal('modal-doc')">
+          Документация
+        </button>
+      </div>
       <% if (@ error-type) %>
       <div class="w3-center">
         <div class="w3-container w3-leftbar w3-rightbar w3-border-red w3-pale-red">

@@ -11,8 +11,11 @@
       (funcall (cl-template:compile-template template)
                (if context context (create-context))))))
 
-(defun create-context (&key (answer "") (expression "") error-message error-type)
+(defun create-context (&key (answer "") (expression "") error-message error-type
+                         function-list constant-list)
   (list :answer answer
         :expression expression
         :error-message error-message
-        :error-type error-type))
+        :error-type error-type
+        :function-list function-list
+        :constant-list constant-list))

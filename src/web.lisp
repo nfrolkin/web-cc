@@ -7,7 +7,11 @@
             (hunchentoot:post-parameter "expression")))))
 
 (defun calculation-handler/get ()
-  (render-template "index.html.clt"))
+  (render-template
+   "index.html.clt"
+   (create-context
+    :function-list (list-all-functions)
+    :constant-list (list-all-constants))))
 
 (defun calculation-handler/post (expression)
   (let ((context (create-context)))
