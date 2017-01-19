@@ -71,7 +71,20 @@
         </div>
       </div>
       <div class="w3-row-padding">
-        <button class="w3-btn w3-white w3-border w3-border-grey w3-text-black w3-round-large" onclick="openModal('modal-doc')">
+        <div class="w3-dropdown-hover">
+          <button class="w3-btn w3-white w3-border w3-border-grey w3-text-black" onmouseover="focusSearch(this)">Быстрый доступ</button>
+          <div class="w3-dropdown-content w3-card-2 w3-white" id="dropdown-quick-access">
+            <% if (or (@ function-list) (@ constant-list)) %>
+            <input class="w3-input w3-padding dropdown-focus" type="text" placeholder="Поиск...">
+            <% loop for entry in (append (@ function-list) (@ constant-list)) do %>
+            <a class="searched" href=""><%= first entry %></a>
+            <% end %>
+            <% else %>
+            <p class="w3-center">Ничего нет</p>
+            <% end %>
+          </div>
+        </div>
+        <button class="w3-btn w3-white w3-border w3-border-grey w3-text-black" onclick="openModal('modal-doc')">
           Документация
         </button>
       </div>

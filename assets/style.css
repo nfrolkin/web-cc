@@ -6,3 +6,12 @@
 .main > div {
     margin-bottom: 60px;
 }
+
+#dropdown-quick-access {
+  max-height: 500px;
+  overflow: auto;
+}
+
+.w3-dropdown-content {
+  z-index: 10;
+}

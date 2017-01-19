@@ -12,3 +12,7 @@ function closeModal(id) {
   var modal = document.getElementById(id);
   modal.style.display = 'none';
 }
+
+function focusSearch(dropdownElement) {
+  dropdownElement.parentElement.querySelector(".dropdown-focus").focus();
+}
