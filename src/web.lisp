@@ -1,11 +1,13 @@
 (in-package :web-cc)
 
 (defun calculation-handler ()
-  (render-page ("/assets/w3.css" "/assets/style.css") ()
-               (case (hunchentoot:request-method*)
-                 (:post (calculation-handler/post))
-                 (:get (calculation-handler/get)))))
+  (case (hunchentoot:request-method*)
+    (:get (calculation-handler/get))
+    (:post (calculation-handler/post
+            (hunchentoot:post-parameter "expression")))))
 
-(defun calculation-handler/get ())
+(defun calculation-handler/get ()
+  (render-template "index.html.clt"))
 
-(defun calculation-handler/post ())
+(defun calculation-handler/post (expression)
+  (declare (ignore expression)))

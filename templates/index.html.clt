@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/w3.css">
+    <link rel="stylesheet" href="/assets/style.css">
+    <title>Калькулятор</title>
+  </head>
+  <body>
+    <div class="w3-content main">
+      <div>
+        <form method="post" class="w3-row">
+          <div class="w3-col l10 m10">
+            <input class="w3-input" type="text" placeholder="Здесь должно быть выражение" value="<%= (@ expression) %>">
+          </div>
+          <div class="w3-col l2 m2 w3-center w3-hide-small">
+            <button class="w3-btn w3-green">Вычислить</button>
+          </div>
+        </form>
+        <div class="w3-row-padding w3-large">
+          <div class="w3-col l2 m2">
+            <p>Ответ:</p>
+          </div>
+          <div class="w3-col l2 m2">
+            <p><%= (@ answer) %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

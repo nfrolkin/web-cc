@@ -1,7 +1,7 @@
 (defsystem "web-cc"
   :depends-on (:esrap
                :parse-number
-               :cl-markup
+               :cl-template
                :hunchentoot)
   :pathname "src/"
   :serial t
