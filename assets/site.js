@@ -16,3 +16,18 @@ function closeModal(id) {
 function focusSearch(dropdownElement) {
   dropdownElement.parentElement.querySelector(".dropdown-focus").focus();
 }
+
+function search(searchString, parentElement) {
+  var cleanedSearchString, elements;
+  cleanedSearchString = searchString.toLowerCase();
+  elements = parentElement.querySelectorAll(".searched");
+
+  elements.forEach(function(item, i, els) {
+    var text = item.innerHTML.toLowerCase();
+    if (text.search(cleanedSearchString) > -1) {
+      item.style.display = "";
+    } else {
+      item.style.display = "none";
+    }
+  });
+}
