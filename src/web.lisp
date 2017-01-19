@@ -14,7 +14,10 @@
     :constant-list (list-all-constants))))
 
 (defun calculation-handler/post (expression)
-  (let ((context (create-context)))
+  (let ((context (create-context
+                  :expression expression
+                  :function-list (list-all-functions)
+                  :constant-list (list-all-constants))))
     (handler-case (compute expression)
       (undefined-constant-error (e)
         (setf (getf context :error-type) :undefined-constant
@@ -34,5 +37,4 @@
         (setf (getf context :error-type) :calculation))
       (:no-error (answer)
         (setf (getf context :answer) answer)))
-    (setf (getf context :expression) expression)
     (render-template "index.html.clt" context)))
