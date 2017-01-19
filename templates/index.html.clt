@@ -9,10 +9,42 @@
   </head>
   <body>
     <div class="w3-content main">
+      <% if (@ error-type) %>
+      <div class="w3-center">
+        <div class="w3-container w3-leftbar w3-rightbar w3-border-red w3-pale-red">
+          <% if (equal (@ error-type) :undefined-constant) %>
+          <p>Ошибка! Неизвестная константа: <b><%= (@ error-message) %></b></p>
+          <% end %>
+          <% if (equal (@ error-type) :undefined-function) %>
+          <p>Ошибка! Неизвестная функция: <b><%= (@ error-message) %></b></p>
+          <% end %>
+          <% if (equal (@ error-type) :mismatch) %>
+          <p>
+            Ошибка! Функция <b><%= first (@ error-message) %></b> ожидает
+            <b><%= princ-to-string (second (@ error-message)) %></b> аргумент(ов),
+            но было передано <b><%= princ-to-string (third (@ error-message)) %></b>
+          </p>
+          <% end %>
+          <% if (equal (@ error-type) :parse) %>
+          <p>
+            Ошибка! В выражении обнаружен неверный символ на позиции:
+            <b><%= princ-to-string (@ error-message) %></b>
+          </p>
+          <p></p>
+          <% end %>
+          <% if (equal (@ error-type) :calculation) %>
+          <p>
+            Ошибка! Невозможно произвести вычисления. Проверьте выражение на
+            корректность операций (деление на ноль и т.д.)
+          </p>
+          <% end %>
+        </div>
+      </div>
+      <% end %>
       <div>
         <form method="post" class="w3-row">
           <div class="w3-col l10 m10">
-            <input class="w3-input" type="text" placeholder="Здесь должно быть выражение" value="<%= (@ expression) %>">
+            <input class="w3-input" type="text" name="expression" placeholder="Здесь должно быть выражение" value="<%= (@ expression) %>">
           </div>
           <div class="w3-col l2 m2 w3-center w3-hide-small">
             <button class="w3-btn w3-green">Вычислить</button>
@@ -23,7 +55,7 @@
             <p>Ответ:</p>
           </div>
           <div class="w3-col l2 m2">
-            <p><%= (@ answer) %></p>
+            <p><%= princ-to-string (@ answer) %></p>
           </div>
         </div>
       </div>
