@@ -127,6 +127,16 @@ Delete all functions from defined functions. Always return NIL."
 
 
 ;; Function utilities
+(defun list-all-functions ()
+  (loop for key being the hash-keys of *defined-functions*
+     using (hash-value value)
+     collect (cons key (remove-if #'keywordp value))))
+
+(defun list-all-constants ()
+  (loop for key being the hash-keys of *defined-constants*
+     using (hash-value value)
+     collect (cons key (remove-if #'keywordp value))))
+
 (defun convert-operation (production)
   (let ((operation (case (coerce (first production) 'character)
                      (#\+ '+)
