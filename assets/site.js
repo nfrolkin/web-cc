@@ -13,8 +13,8 @@ function closeModal(id) {
   modal.style.display = 'none';
 }
 
-function focusSearch(dropdownElement) {
-  dropdownElement.parentElement.querySelector(".dropdown-focus").focus();
+function focusSearch(element) {
+  element.parentElement.querySelector(".search-focus").focus();
 }
 
 function search(searchString, parentElement) {
