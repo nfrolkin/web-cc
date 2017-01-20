@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/w3.css">
+    <link rel="stylesheet" href="/assets/style.css">
+    <script src="/assets/site.js"></script>
+    <title>Калькулятор</title>
+  </head>
+  <body>
+    <div class="w3-content main">
+      <div id="modal-doc" class="w3-modal">
+        <div class="w3-modal-content w3-container w3-round w3-card-4">
+          <header>
+            <span class="w3-closebtn" onclick="closeModal('modal-doc')">&times</span>
+            <h2 class="w3-bottombar w3-border-black">Документация</h2>
+          </header>
+          <div class="w3-section">
+            <p>
+              Данный калькулятор поддерживает один тип данных - числа с плавающей запятой.
+            </p>
+            <p>
+              Ниже находится справочник по всем объявленным функциям и константам. Если
+              какого-либо раздела ("Константы" или "Функции") нет - значит ни одной
+              константы/функции объявлено не было.
+            </p>
+            <% if (or (@ function-list) (@ constant-list)) %>
+            <input class="w3-input" type="text" placeholder="Поиск по документации" onkeyup="search(this.value, this.parentElement, 'b')">
+            <% end %>
+            <% if (@ function-list) %>
+            <h3 class="w3-border-bottom">Функции</h3>
+            <table class="w3-table w3-striped">
+              <tr>
+                <th>Имя</th>
+                <th>Агрументы</th>
+                <th>Описание</th>
+              </tr>
+              <% loop for function in (@ function-list) do %>
+              <tr class="searched">
+                <td><b><%= first function %></b></td>
+                <td><%= princ-to-string (third function) %></td>
+                <% if (fourth function) %>
+                <td><%= fourth function %></td>
+                <% else %>
+                <td>Нет описания</td>
+                <% end %>
+              </tr>
+              <% end %>
+            </table>
+            <% end %>
+            <% if (@ constant-list) %>
+            <h3 class="w3-border-bottom">Константы</h3>
+            <table class="w3-table w3-striped">
+              <tr>
+                <th>Имя</th>
+                <th>Значение</th>
+                <th>Описание</th>
+              </tr>
+              <% loop for constant in (@ constant-list) do %>
+              <tr class="searched">
+                <td><b><%= first constant %></b></td>
+                <td><%= princ-to-string (second constant) %></td>
+                <% if (third constant) %>
+                <td><%= third constant %></td>
+                <% else %>
+                <td>Нет описания</td>
+                <% end %>
+              </tr>
+              <% end %>
+            </table>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="w3-row-padding">
+        <div class="w3-dropdown-hover">
+          <button class="w3-btn w3-white w3-border w3-border-grey w3-text-black" onmouseover="focusSearch(this)">Быстрый доступ</button>
+          <div class="w3-dropdown-content w3-card-2 w3-white" id="dropdown-quick-access">
+            <% if (or (@ function-list) (@ constant-list)) %>
+            <input class="w3-input w3-padding search-focus" type="text" placeholder="Поиск..." onkeyup="search(this.value, this.parentElement)">
+            <% loop for entry in (append (@ function-list) (@ constant-list)) do %>
+            <a class="searched" href="#" onclick="insert('<%= first entry %>', 'calculator')"><%= first entry %></a>
+            <% end %>
+            <% else %>
+            <p class="w3-center">Ничего нет</p>
+            <% end %>
+          </div>
+        </div>
+        <button class="w3-btn w3-white w3-border w3-border-grey w3-text-black" onclick="openModal('modal-doc')">
+          Документация
+        </button>
+      </div>
+      <% if (@ error-type) %>
+      <div class="w3-center">
+        <div class="w3-container w3-leftbar w3-rightbar w3-border-red w3-pale-red">
+          <% if (equal (@ error-type) :undefined-constant) %>
+          <p>Ошибка! Неизвестная константа: <b><%= (@ error-message) %></b></p>
+          <% end %>
+          <% if (equal (@ error-type) :undefined-function) %>
+          <p>Ошибка! Неизвестная функция: <b><%= (@ error-message) %></b></p>
+          <% end %>
+          <% if (equal (@ error-type) :mismatch) %>
+          <p>
+            Ошибка! Функция <b><%= first (@ error-message) %></b> ожидает
+            <b><%= princ-to-string (second (@ error-message)) %></b> аргумент(ов),
+            но было передано <b><%= princ-to-string (third (@ error-message)) %></b>
+          </p>
+          <% end %>
+          <% if (equal (@ error-type) :parse) %>
+          <p>
+            Ошибка! В выражении обнаружен неверный символ на позиции:
+            <b><%= princ-to-string (@ error-message) %></b>
+          </p>
+          <p></p>
+          <% end %>
+          <% if (equal (@ error-type) :calculation) %>
+          <p>
+            Ошибка! Невозможно произвести вычисления. Проверьте выражение на
+            корректность операций (деление на ноль и т.д.)
+          </p>
+          <% end %>
+        </div>
+      </div>
+      <% end %>
+      <div>
+        <form method="post" class="w3-row">
+          <div class="w3-col l10 m10">
+            <input id="calculator" class="w3-input" type="text" name="expression" placeholder="Здесь должно быть выражение" value="<%= (@ expression) %>">
+          </div>
+          <div class="w3-col l2 m2 w3-center w3-hide-small">
+            <button class="w3-btn w3-green">Вычислить</button>
+          </div>
+        </form>
+        <div class="w3-row-padding w3-large">
+          <div class="w3-col l2 m2">
+            <p>Ответ:</p>
+          </div>
+          <div class="w3-col l2 m2">
+            <p><%= princ-to-string (@ answer) %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

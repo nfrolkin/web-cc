@@ -65,7 +65,7 @@ EXPRESSION must be type of string or error would be signaled."
                  (esrap:esrap-error (e) (error 'parser-error
                                                :pos (esrap:esrap-error-position e))))))
 
-(defun def-constant (name value &key documentation)
+(defun def-constant (name value &optional documentation)
   "Define a new constant or redefine old one.
 
 Define a new constant identified by NAME with value equal to VALUE.
@@ -93,7 +93,7 @@ Delete all constants from defined constants. Always return NIL."
   (clrhash *defined-constants*)
   nil)
 
-(defun def-function (name function-symbol args-number &key documentation)
+(defun def-function (name function-symbol args-number &optional documentation)
   "Define a new function or redefine old one.
 
 Define a new function identified by NAME with value equal to SYMBOL-OR-FUNCTION.
@@ -127,6 +127,16 @@ Delete all functions from defined functions. Always return NIL."
 
 
 ;; Function utilities
+(defun list-all-functions ()
+  (loop for key being the hash-keys of *defined-functions*
+     using (hash-value value)
+     collect (cons key (remove-if #'keywordp value))))
+
+(defun list-all-constants ()
+  (loop for key being the hash-keys of *defined-constants*
+     using (hash-value value)
+     collect (cons key (remove-if #'keywordp value))))
+
 (defun convert-operation (production)
   (let ((operation (case (coerce (first production) 'character)
                      (#\+ '+)
