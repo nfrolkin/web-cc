@@ -37,3 +37,10 @@ function search(searchString, parentElement, selector) {
     }
   });
 }
+
+function insert(string, elementIdTo) {
+  var elementTo;
+  elementTo = document.getElementById(elementIdTo);
+
+  elementTo.value += string;
+}

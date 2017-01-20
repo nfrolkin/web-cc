@@ -80,7 +80,7 @@
             <% if (or (@ function-list) (@ constant-list)) %>
             <input class="w3-input w3-padding search-focus" type="text" placeholder="Поиск..." onkeyup="search(this.value, this.parentElement)">
             <% loop for entry in (append (@ function-list) (@ constant-list)) do %>
-            <a class="searched" href=""><%= first entry %></a>
+            <a class="searched" href="#" onclick="insert('<%= first entry %>', 'calculator')"><%= first entry %></a>
             <% end %>
             <% else %>
             <p class="w3-center">Ничего нет</p>
@@ -126,7 +126,7 @@
       <div>
         <form method="post" class="w3-row">
           <div class="w3-col l10 m10">
-            <input class="w3-input" type="text" name="expression" placeholder="Здесь должно быть выражение" value="<%= (@ expression) %>">
+            <input id="calculator" class="w3-input" type="text" name="expression" placeholder="Здесь должно быть выражение" value="<%= (@ expression) %>">
           </div>
           <div class="w3-col l2 m2 w3-center w3-hide-small">
             <button class="w3-btn w3-green">Вычислить</button>
