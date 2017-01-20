@@ -25,6 +25,9 @@
               какого-либо раздела ("Константы" или "Функции") нет - значит ни одной
               константы/функции объявлено не было.
             </p>
+            <% if (or (@ function-list) (@ constant-list)) %>
+            <input class="w3-input" type="text" placeholder="Поиск по документации" onkeyup="search(this.value, this.parentElement, 'b')">
+            <% end %>
             <% if (@ function-list) %>
             <h3 class="w3-border-bottom">Функции</h3>
             <table class="w3-table w3-striped">
@@ -34,7 +37,7 @@
                 <th>Описание</th>
               </tr>
               <% loop for function in (@ function-list) do %>
-              <tr>
+              <tr class="searched">
                 <td><b><%= first function %></b></td>
                 <td><%= princ-to-string (third function) %></td>
                 <% if (fourth function) %>
@@ -55,7 +58,7 @@
                 <th>Описание</th>
               </tr>
               <% loop for constant in (@ constant-list) do %>
-              <tr>
+              <tr class="searched">
                 <td><b><%= first constant %></b></td>
                 <td><%= princ-to-string (second constant) %></td>
                 <% if (third constant) %>
