@@ -1,6 +1,7 @@
 (in-package #:web-cc)
 
-(defparameter *templates-dir* "../templates/")
+(defparameter *templates-dir*
+  (merge-pathnames "templates/" (asdf:system-source-directory :web-cc)))
 
 
 (defun render-template (template-name &optional context)

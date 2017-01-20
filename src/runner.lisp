@@ -1,7 +1,8 @@
 (in-package #:web-cc)
 
 (defparameter *assets-dispatcher*
-  (hunchentoot:create-folder-dispatcher-and-handler "/assets/" "../assets/"))
+  (hunchentoot:create-folder-dispatcher-and-handler
+   "/assets/" (merge-pathnames "assets/" (asdf:system-source-directory :web-cc))))
 (defparameter *calculator-dispatcher*
   (hunchentoot:create-regex-dispatcher "^/$" #'calculation-handler))
 (defparameter *current-acceptor* nil)
