@@ -43,4 +43,5 @@ function insert(string, elementIdTo) {
   elementTo = document.getElementById(elementIdTo);
 
   elementTo.value += string;
+  elementTo.focus();
 }
