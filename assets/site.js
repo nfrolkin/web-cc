@@ -17,13 +17,19 @@ function focusSearch(element) {
   element.parentElement.querySelector(".search-focus").focus();
 }
 
-function search(searchString, parentElement) {
+function search(searchString, parentElement, selector) {
   var cleanedSearchString, elements;
   cleanedSearchString = searchString.toLowerCase();
   elements = parentElement.querySelectorAll(".searched");
 
   elements.forEach(function(item, i, els) {
-    var text = item.innerHTML.toLowerCase();
+    var text;
+
+    if (typeof selector === 'undefined') {
+      text = item.innerHTML.toLowerCase();
+    } else {
+      text = item.querySelector(selector).innerHTML.toLowerCase();
+    }
     if (text.search(cleanedSearchString) > -1) {
       item.style.display = "";
     } else {
